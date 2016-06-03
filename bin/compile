@@ -287,13 +287,17 @@ if [ -n "$GO_LINKER_SYMBOL" -a -n "$GO_LINKER_VALUE" ]
 then
     case $ver in
     go1.5*|go1.6*|go1.7*)
-        xval="$GO_LINKER_SYMBOL=$GO_LINKER_VALUE"
+        xval="-X $GO_LINKER_SYMBOL=$GO_LINKER_VALUE"
         ;;
     *)
-        xval="$GO_LINKER_SYMBOL $GO_LINKER_VALUE"
+        xval="-X $GO_LINKER_SYMBOL $GO_LINKER_VALUE"
         ;;
     esac
-    FLAGS=(${FLAGS[@]} -ldflags "-X $xval")
+    if [ -n "$GO_LINKER_STATIC" ]
+    then
+        xval=(${xval} '-extldflags "-static"')
+    fi
+    FLAGS=(${FLAGS[@]} -ldflags "$xval")
 fi
 
 # GB installation
